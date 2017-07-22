@@ -1,0 +1,14 @@
+#!/bin/bash
+
+program='gif-to-mov'
+version=0.1.0
+
+if [ $# -ne 2 ]
+then
+    cat << EOF
+Usage: $program inputgif outputmov
+EOF
+    exit 1
+fi
+
+ffmpeg -i "$1" -movflags faststart -pix_fmt yuv420p -vf "scale=trunc(iw/2)*2:trunc(ih/2)*2" "$2"

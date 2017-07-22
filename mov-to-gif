@@ -1,0 +1,30 @@
+#!/bin/bash
+
+program='mov-to-gif'
+version=0.1.0
+
+if [ $# -ne 4 ]
+then
+    cat << EOF
+Usage: $program inputmov outputgif width fps
+EOF
+    exit 1
+fi
+
+input="$1"
+output="$2"
+width="$3"
+fps="$4"
+
+if [ -f "$output" ]
+then
+    printf '%s already exists; do you want to override it? [Y/n] ' "$output"
+    read yn
+    case "$yn" in
+        n*|N*)
+            exit 1
+            ;;
+    esac
+fi
+
+ffmpeg -i "$input" -vf fps=$fps,scale=$width:-1 -r 10 -f image2pipe -vcodec ppm - | convert -delay 5 -loop 0 -layers Optimize - "$output"
